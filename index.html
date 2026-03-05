@@ -75,7 +75,7 @@ body {
 .header-left h1 span { color: var(--coral-light); }
 .header-left .subtitle { font-size: 12.5px; color: var(--powder); font-weight: 400; margin-top: 4px; line-height: 1.4; }
 
-.gov-controls-grid { display: grid; grid-template-columns: repeat(3, auto); gap: 6px 16px; align-items: center; }
+.gov-controls-grid { display: grid; grid-template-columns: repeat(4, auto); gap: 6px 14px; align-items: center; }
 .gov-ctrl { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--powder-light); font-weight: 500; white-space: nowrap; }
 .gov-ctrl-icon { width: 15px; height: 15px; stroke: var(--coral-light); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
 
@@ -238,6 +238,14 @@ body {
         <svg class="gov-ctrl-icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
         Policy Enforcement
       </div>
+      <div class="gov-ctrl">
+        <svg class="gov-ctrl-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        RBAC
+      </div>
+      <div class="gov-ctrl">
+        <svg class="gov-ctrl-icon" viewBox="0 0 24 24"><rect x="2" y="2" width="9" height="9" rx="1"/><rect x="13" y="2" width="9" height="9" rx="1"/><rect x="2" y="13" width="9" height="9" rx="1"/><rect x="13" y="13" width="9" height="9" rx="1"/></svg>
+        Multi-Tenant Isolation
+      </div>
     </div>
   </div>
 
@@ -345,7 +353,7 @@ body {
               </div>
             </div>
           </div>
-          <div class="agentic-deploy-note">Learners use AI agents to write code, then deploy to real cloud infrastructure &mdash; all inside one governed sandbox lab. No separate accounts, no risk.</div>
+          <div class="agentic-deploy-note">Learners use AI agents to write code, then deploy to real cloud infrastructure &mdash; all inside one governed sandbox lab. Agents can be given their own budget caps for token and compute spend. No separate accounts, no risk.</div>
         </div>
 
         <!-- Other environments -->
