@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How Vocareum Works</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --dark-slate: #2e3a41;
+  --dark-slate-deep: #232e34;
+  --coral: #ff7f50;
+  --coral-light: #ff9b78;
+  --coral-faint: #fff8f5;
+  --steel: #445664;
+  --steel-light: #6b7f8e;
+  --powder: #c1d3dd;
+  --powder-light: #e3ecf1;
+  --white: #ffffff;
+  --section-bg: #f6f9fb;
+  --card-border: #d8e2e8;
+  --max-w: 1280px;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--dark-slate);
+  background: var(--white);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.governance-sandbox {
+  max-width: var(--max-w);
+  margin: 24px auto 40px;
+  position: relative;
+  border: 3px solid var(--coral);
+  border-radius: 14px;
+  background: var(--white);
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(255,127,80,0.08), 0 8px 40px rgba(46,58,65,0.07), 0 2px 8px rgba(46,58,65,0.04);
+}
+
+.diagram-content {
+  position: relative;
+  padding: 24px 32px 20px;
+  background: repeating-linear-gradient(-45deg, transparent, transparent 80px, rgba(255,127,80,0.012) 80px, rgba(255,127,80,0.012) 82px);
+}
+
+.gov-rail {
+  position: absolute; top: 0; bottom: 0; width: 20px;
+  background: linear-gradient(180deg, rgba(255,127,80,0.04), rgba(255,127,80,0.02), rgba(255,127,80,0.04));
+  z-index: 1;
+}
+.gov-rail-left { left: 0; border-right: 1px solid rgba(255,127,80,0.1); }
+.gov-rail-right { right: 0; border-left: 1px solid rgba(255,127,80,0.1); }
+.gov-rail-text {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%) rotate(-90deg);
+  white-space: nowrap; font-size: 8px; font-weight: 800;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--coral); opacity: 0.3;
+}
+
+/* Header */
+.header-bar {
+  background: var(--dark-slate);
+  padding: 18px 32px;
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 24px;
+}
+.header-left h1 { font-size: 22px; font-weight: 800; color: var(--white); letter-spacing: -0.4px; line-height: 1.2; }
+.header-left h1 span { color: var(--coral-light); }
+.header-left .subtitle { font-size: 12.5px; color: var(--powder); font-weight: 400; margin-top: 4px; line-height: 1.4; }
+
+.gov-controls-grid { display: grid; grid-template-columns: repeat(3, auto); gap: 6px 16px; align-items: center; }
+.gov-ctrl { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--powder-light); font-weight: 500; white-space: nowrap; }
+.gov-ctrl-icon { width: 15px; height: 15px; stroke: var(--coral-light); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+/* Steps */
+.step-label { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.step-circle {
+  width: 26px; height: 26px; border-radius: 50%; background: var(--coral); color: var(--white);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; flex-shrink: 0; line-height: 1;
+  box-shadow: 0 2px 6px rgba(255,127,80,0.3);
+}
+.step-title { font-size: 14px; font-weight: 700; color: var(--dark-slate); }
+.step-desc { font-size: 12px; color: var(--steel-light); font-weight: 400; margin-left: 2px; }
+
+/* Sources */
+.sources-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 4px; }
+.source-card { background: var(--white); border: 1px solid var(--card-border); border-radius: 10px; padding: 14px 16px; }
+.source-card-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.source-card-head h3 { font-size: 13px; font-weight: 700; color: var(--dark-slate); }
+.card-icon { width: 16px; height: 16px; stroke: var(--steel); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+.tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.tag { background: var(--section-bg); border: 1px solid var(--card-border); border-radius: 5px; padding: 3px 9px; font-size: 11px; color: var(--steel); font-weight: 500; }
+.tag.dashed { background: transparent; border-style: dashed; border-color: var(--powder); font-style: italic; color: var(--steel-light); }
+
+/* Flow arrows */
+.flow-down { display: flex; align-items: center; justify-content: center; gap: 14px; padding: 8px 0; }
+.flow-arrow-svg { width: 20px; height: 24px; }
+.protocol-chip { background: var(--dark-slate); color: var(--white); font-size: 10.5px; font-weight: 700; padding: 4px 11px; border-radius: 4px; letter-spacing: 0.3px; }
+
+/* Platform */
+.platform { border: 1.5px solid var(--card-border); border-radius: 12px; overflow: hidden; margin-bottom: 4px; background: var(--white); box-shadow: 0 1px 4px rgba(46,58,65,0.04); }
+.platform-head { background: linear-gradient(135deg, var(--dark-slate) 0%, var(--dark-slate-deep) 100%); color: var(--white); padding: 12px 20px; display: flex; align-items: center; gap: 10px; }
+.platform-head h2 { font-size: 15px; font-weight: 700; letter-spacing: -0.2px; }
+.platform-head .ph-sub { font-size: 11px; color: var(--powder); margin-left: auto; font-weight: 400; }
+.platform-body { padding: 18px 20px 16px; }
+
+.inner-label { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.inner-label-text { font-size: 12.5px; font-weight: 700; color: var(--dark-slate); }
+
+/* Environment grid */
+.env-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+.env { border: 1px solid var(--card-border); border-radius: 8px; overflow: hidden; background: var(--white); }
+.env-head { padding: 7px 11px; font-size: 11.5px; font-weight: 700; color: var(--dark-slate); background: var(--section-bg); border-bottom: 1px solid var(--card-border); display: flex; align-items: center; gap: 6px; }
+.env-icon { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.env-body { padding: 8px 11px; }
+.env-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.env-chip { font-size: 10.5px; color: var(--steel); background: var(--section-bg); padding: 2px 7px; border-radius: 3px; font-weight: 500; line-height: 1.5; }
+
+.env.accent { border-color: var(--coral); }
+.env.accent .env-head { background: var(--coral-faint); color: var(--coral); }
+
+/* AI row */
+.ai-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.ai-card { border: 1px solid var(--card-border); border-radius: 8px; overflow: hidden; }
+.ai-card.accent { border-color: var(--coral); }
+.ai-head { padding: 7px 11px; font-size: 11.5px; font-weight: 700; color: var(--dark-slate); background: var(--section-bg); border-bottom: 1px solid var(--card-border); display: flex; align-items: center; gap: 6px; }
+.ai-card.accent .ai-head { background: var(--coral-faint); color: var(--coral); }
+.ai-body { padding: 8px 11px; }
+.ai-body .fine-print { font-size: 10px; color: var(--steel-light); margin-top: 5px; font-style: italic; line-height: 1.4; }
+
+/* Assessment */
+.assess-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.assess-card { border: 1px solid var(--card-border); border-radius: 8px; overflow: hidden; }
+.assess-head { padding: 7px 11px; font-size: 11.5px; font-weight: 700; color: var(--dark-slate); background: var(--section-bg); border-bottom: 1px solid var(--card-border); display: flex; align-items: center; gap: 6px; }
+.assess-body { padding: 8px 11px; }
+
+/* Outputs */
+.outputs-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.out-card { background: var(--white); border: 1px solid var(--card-border); border-radius: 8px; padding: 12px; text-align: center; }
+.out-card h4 { font-size: 12px; font-weight: 700; color: var(--dark-slate); margin-bottom: 4px; line-height: 1.3; }
+.out-card p { font-size: 10.5px; color: var(--steel-light); line-height: 1.4; }
+.out-icon { width: 22px; height: 22px; stroke: var(--coral); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; margin-bottom: 6px; }
+
+/* Stats */
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--card-border); background: var(--section-bg); }
+.stat-cell { text-align: center; padding: 14px 8px; border-right: 1px solid var(--card-border); }
+.stat-cell:last-child { border-right: none; }
+.stat-val { font-size: 22px; font-weight: 800; color: var(--dark-slate); letter-spacing: -0.5px; line-height: 1.2; }
+.stat-lbl { font-size: 10.5px; color: var(--steel); font-weight: 500; margin-top: 2px; }
+
+/* Compliance */
+.compliance-row { display: flex; justify-content: center; align-items: center; gap: 28px; padding: 11px 20px; background: var(--dark-slate); border-bottom-left-radius: 11px; border-bottom-right-radius: 11px; }
+.comp-badge { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; color: var(--powder-light); }
+.comp-icon { width: 13px; height: 13px; stroke: var(--coral-light); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+.section-sep { height: 1px; background: linear-gradient(90deg, transparent, var(--card-border), transparent); margin: 12px 0; }
+
+/* Browser callout */
+.browser-callout {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  background: var(--section-bg); border: 1px dashed var(--card-border); border-radius: 6px;
+  padding: 6px 14px; margin-bottom: 14px; font-size: 11px; color: var(--steel); font-weight: 500;
+}
+.browser-callout svg { width: 14px; height: 14px; stroke: var(--steel); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div class="governance-sandbox">
+
+  <!-- HEADER -->
+  <div class="header-bar">
+    <div class="header-left">
+      <h1>How <span>Vocareum</span> Works</h1>
+      <div class="subtitle">Production cloud consoles, AI models, and dev tools &mdash; browser-based and running inside the Vocareum Governance Sandbox</div>
+    </div>
+    <div class="gov-controls-grid">
+      <div class="gov-ctrl">
+        <svg class="gov-ctrl-icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Budget Caps
+      </div>
+      <div class="gov-ctrl">
+        <svg class="gov-ctrl-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        IAM Isolation
+      </div>
+      <div class="gov-ctrl">
+        <svg class="gov-ctrl-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Full Audit Logs
+      </div>
+      <div class="gov-ctrl">
+        <svg class="gov-ctrl-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Auto Teardown
+      </div>
+      <div class="gov-ctrl">
+        <svg class="gov-ctrl-icon" viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.78 7.78 5.5 5.5 0 017.78-7.78zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+        Key Protection
+      </div>
+      <div class="gov-ctrl">
+        <svg class="gov-ctrl-icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Policy Enforcement
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDE RAILS -->
+  <div class="gov-rail gov-rail-left"><div class="gov-rail-text">Governance Sandbox</div></div>
+  <div class="gov-rail gov-rail-right"><div class="gov-rail-text">Governance Sandbox</div></div>
+
+  <!-- CONTENT -->
+  <div class="diagram-content" style="margin-left: 20px; margin-right: 20px;">
+
+    <!-- STEP 1 -->
+    <div class="step-label">
+      <span class="step-circle">1</span>
+      <span class="step-title">Learner Connects</span>
+      <span class="step-desc">&mdash; from any LMS or learning platform</span>
+    </div>
+
+    <div class="sources-row">
+      <div class="source-card">
+        <div class="source-card-head">
+          <svg class="card-icon" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <h3>Learning Management Systems</h3>
+        </div>
+        <div class="tags">
+          <span class="tag">Canvas</span>
+          <span class="tag">Blackboard</span>
+          <span class="tag">Moodle</span>
+          <span class="tag">D2L Brightspace</span>
+          <span class="tag dashed">Any LTI-compatible LMS</span>
+        </div>
+      </div>
+      <div class="source-card">
+        <div class="source-card-head">
+          <svg class="card-icon" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+          <h3>Learning Platforms</h3>
+        </div>
+        <div class="tags">
+          <span class="tag">Coursera</span>
+          <span class="tag">Udacity</span>
+          <span class="tag">Udemy</span>
+          <span class="tag">Emeritus</span>
+          <span class="tag">CFA Institute</span>
+          <span class="tag dashed">Any API-connected platform</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arrow + protocols -->
+    <div class="flow-down">
+      <svg class="flow-arrow-svg" viewBox="0 0 20 24" fill="none"><line x1="10" y1="0" x2="10" y2="18" stroke="#c1d3dd" stroke-width="2"/><polygon points="4,16 10,23 16,16" fill="#c1d3dd"/></svg>
+      <span class="protocol-chip">LTI 1.3</span>
+      <span class="protocol-chip">REST API</span>
+      <span class="protocol-chip">SAML 2.0 SSO</span>
+      <svg class="flow-arrow-svg" viewBox="0 0 20 24" fill="none"><line x1="10" y1="0" x2="10" y2="18" stroke="#c1d3dd" stroke-width="2"/><polygon points="4,16 10,23 16,16" fill="#c1d3dd"/></svg>
+    </div>
+
+    <!-- PLATFORM -->
+    <div class="platform">
+      <div class="platform-head">
+        <span class="step-circle" style="width:24px;height:24px;font-size:12px;box-shadow:0 2px 6px rgba(255,127,80,0.4);">2</span>
+        <h2>Vocareum Provisions &amp; Orchestrates</h2>
+        <span class="ph-sub">Automatic environment setup, identity, and policy</span>
+      </div>
+
+      <div class="platform-body">
+
+        <!-- STEP 3 -->
+        <div class="inner-label">
+          <span class="step-circle" style="width:22px;height:22px;font-size:11px;">3</span>
+          <span class="inner-label-text">Production Tools &amp; Real Cloud Consoles &mdash; Sandboxed</span>
+        </div>
+
+        <div class="browser-callout">
+          <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="2" y1="7" x2="22" y2="7"/><circle cx="5" cy="5" r="0.5" fill="currentColor" stroke="none"/><circle cx="7.5" cy="5" r="0.5" fill="currentColor" stroke="none"/><circle cx="10" cy="5" r="0.5" fill="currentColor" stroke="none"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          100% browser-based &mdash; no local installs, no client software. Works on any device.
+        </div>
+
+        <div class="env-grid">
+          <div class="env accent">
+            <div class="env-head">
+              <svg class="env-icon" viewBox="0 0 24 24"><path d="M12 2a4 4 0 014 4c0 1.95-1.4 3.58-3.25 3.93L12 22l-.75-12.07A4.001 4.001 0 0112 2z"/><circle cx="12" cy="6" r="1.2" fill="currentColor" stroke="none"/></svg>
+              Agentic AI Labs
+            </div>
+            <div class="env-body">
+              <div class="env-chips">
+                <span class="env-chip">Claude Code</span>
+                <span class="env-chip">Codex</span>
+                <span class="env-chip">Copilot</span>
+                <span class="env-chip">Amazon Q</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="env">
+            <div class="env-head">
+              <svg class="env-icon" viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg>
+              Cloud &amp; Data Platforms
+            </div>
+            <div class="env-body">
+              <div class="env-chips">
+                <span class="env-chip">AWS (1M+ accounts)</span>
+                <span class="env-chip">Azure</span>
+                <span class="env-chip">GCP</span>
+                <span class="env-chip">Databricks</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="env">
+            <div class="env-head">
+              <svg class="env-icon" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              Developer Workspaces
+            </div>
+            <div class="env-body">
+              <div class="env-chips">
+                <span class="env-chip">VS Code</span>
+                <span class="env-chip">Jupyter</span>
+                <span class="env-chip">AI Notebook</span>
+                <span class="env-chip">Custom</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="env">
+            <div class="env-head">
+              <svg class="env-icon" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+              Database Labs
+            </div>
+            <div class="env-body">
+              <div class="env-chips">
+                <span class="env-chip">MySQL</span>
+                <span class="env-chip">PostgreSQL</span>
+                <span class="env-chip">MongoDB</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="env">
+            <div class="env-head">
+              <svg class="env-icon" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+              GPU / CPU Compute
+            </div>
+            <div class="env-body">
+              <div class="env-chips">
+                <span class="env-chip">ML Training</span>
+                <span class="env-chip">Data Processing</span>
+                <span class="env-chip">HPC Workloads</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="env">
+            <div class="env-head">
+              <svg class="env-icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Virtual &amp; Cyber Labs
+            </div>
+            <div class="env-body">
+              <div class="env-chips">
+                <span class="env-chip">Cyber Ranges</span>
+                <span class="env-chip">Network Sim</span>
+                <span class="env-chip">VM Environments</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-sep"></div>
+
+        <!-- STEP 4 -->
+        <div class="inner-label" style="margin-top:14px;">
+          <span class="step-circle" style="width:22px;height:22px;font-size:11px;">4</span>
+          <span class="inner-label-text">AI Services Under Enterprise Policy</span>
+        </div>
+
+        <div class="ai-row">
+          <div class="ai-card accent">
+            <div class="ai-head">
+              <svg class="env-icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              AI Gateway &mdash; Governed Model Access
+            </div>
+            <div class="ai-body">
+              <div class="env-chips">
+                <span class="env-chip">ChatGPT</span>
+                <span class="env-chip">Claude</span>
+                <span class="env-chip">Gemini</span>
+                <span class="env-chip">Amazon Bedrock</span>
+                <span class="env-chip">Azure OpenAI</span>
+              </div>
+              <div class="fine-print">Metered usage, budget-capped per learner, no API keys exposed</div>
+            </div>
+          </div>
+
+          <div class="ai-card">
+            <div class="ai-head">
+              <svg class="env-icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+              Socratic AI Tutor
+            </div>
+            <div class="ai-body">
+              <div class="env-chips">
+                <span class="env-chip">Context-Aware</span>
+                <span class="env-chip">Configurable</span>
+                <span class="env-chip">Hint Scaffolding</span>
+              </div>
+              <div class="fine-print">Guides learners through problems without giving away answers</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-sep"></div>
+
+        <!-- STEP 5 -->
+        <div class="inner-label" style="margin-top:14px;">
+          <span class="step-circle" style="width:22px;height:22px;font-size:11px;">5</span>
+          <span class="inner-label-text">Assessment &amp; Evaluation</span>
+        </div>
+
+        <div class="assess-row">
+          <div class="assess-card">
+            <div class="assess-head">
+              <svg class="env-icon" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+              Assessment Engine
+            </div>
+            <div class="assess-body">
+              <div class="env-chips">
+                <span class="env-chip">Code Execution</span>
+                <span class="env-chip">Deployment Validation</span>
+                <span class="env-chip">Agent Output Grading</span>
+                <span class="env-chip">Rubric Matching</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="assess-card">
+            <div class="assess-head">
+              <svg class="env-icon" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+              AI Lab Grading
+            </div>
+            <div class="assess-body">
+              <div class="env-chips">
+                <span class="env-chip">AI-Analyzed Work</span>
+                <span class="env-chip">Process Evaluation</span>
+                <span class="env-chip">Behavioral Insights</span>
+                <span class="env-chip">Intelligence Reports</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Arrow to outputs -->
+    <div class="flow-down" style="padding:6px 0;">
+      <svg class="flow-arrow-svg" viewBox="0 0 20 24" fill="none"><line x1="10" y1="0" x2="10" y2="18" stroke="#c1d3dd" stroke-width="2"/><polygon points="4,16 10,23 16,16" fill="#c1d3dd"/></svg>
+    </div>
+
+    <!-- STEP 6 -->
+    <div class="step-label">
+      <span class="step-circle">6</span>
+      <span class="step-title">Results Flow Back</span>
+      <span class="step-desc">&mdash; to LMS, instructors, and program owners</span>
+    </div>
+
+    <div class="outputs-row">
+      <div class="out-card">
+        <svg class="out-icon" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        <h4>Auto-Graded Scores</h4>
+        <p>Real-time grade passback to LMS gradebooks</p>
+      </div>
+      <div class="out-card">
+        <svg class="out-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <h4>AI Lab Intelligence</h4>
+        <p>Reports on what learners did and where they struggled</p>
+      </div>
+      <div class="out-card">
+        <svg class="out-icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <h4>Granular Analytics</h4>
+        <p>Per-learner, per-cohort behavioral telemetry</p>
+      </div>
+      <div class="out-card">
+        <svg class="out-icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <h4>Compliance Trails</h4>
+        <p>Session logs, resource usage, policy records</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-cell"><div class="stat-val">50M+</div><div class="stat-lbl">Labs Launched</div></div>
+    <div class="stat-cell"><div class="stat-val">5M+</div><div class="stat-lbl">Learners</div></div>
+    <div class="stat-cell"><div class="stat-val">7,000+</div><div class="stat-lbl">Institutions</div></div>
+    <div class="stat-cell"><div class="stat-val">1M+</div><div class="stat-lbl">AWS Accounts</div></div>
+  </div>
+
+  <!-- COMPLIANCE -->
+  <div class="compliance-row">
+    <div class="comp-badge"><svg class="comp-icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> SOC 2 Type II</div>
+    <div class="comp-badge"><svg class="comp-icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> GDPR</div>
+    <div class="comp-badge"><svg class="comp-icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> FERPA</div>
+    <div class="comp-badge"><svg class="comp-icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> WCAG 2.1 AA</div>
+  </div>
+
+</div>
+
+</body>
+</html>
